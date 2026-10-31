@@ -1,0 +1,21 @@
+activity,phase,incident_manager,legal,comms,hr,it_soc,dpo,business_owner,executive_sponsor
+Open incident record and start timeline,detection,R/A,I,I,,C,I,I,I
+Record awareness timestamp and start regulatory clocks,detection,A,C,,,,R,I,I
+Set and re-assess severity,triage,R/A,C,I,I,C,C,C,I
+Open crisis bridge and name the need-to-know list,triage,R/A,C,C,C,C,C,C,I
+Establish legal privilege and engage external IR / breach coach,triage,C,R/A,,,C,,,C
+Technical containment (isolate / revoke / rotate),containment,A,I,,,R,,C,I
+Decide on service shutdown or disconnection,containment,R,C,I,,C,,C,A
+Scope affected systems / data / individuals,investigation,A,C,,,R,R,C,I
+Evidence collection and chain of custody,investigation,A,C,,,R,,,
+Assess risk to individuals and notification duty,notification,C,C,,,C,R/A,C,I
+Draft and submit regulator notification,notification,C,C,,,,R,,A
+Notify customers and contractual counterparties,notification,C,A,R,,,C,C,I
+Notify affected individuals / employees,notification,C,C,R,R,,A,,I
+Internal staff communication,communication,A,C,R,C,I,,I,I
+Press holding statement and media handling,communication,C,C,R,,,,,A
+Notify insurer and law enforcement,notification,C,R/A,,,,,,C
+Employee investigation / interview / disciplinary,investigation,C,C,,R/A,C,,,I
+Eradication and rebuild,recovery,A,,,,R,,C,I
+Declare recovered and stand down,recovery,R/A,C,C,,C,C,C,I
+Post-incident review and action tracking,post-incident,R,C,C,C,C,C,C,A

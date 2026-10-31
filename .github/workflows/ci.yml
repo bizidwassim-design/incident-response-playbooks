@@ -1,0 +1,30 @@
+name: Playbook checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Syntax-check the scripts
+        run: python -m py_compile scripts/check_playbooks.py
+      - name: Validate playbook structure, templates and links
+        run: python scripts/check_playbooks.py
+      - name: Templates and playbooks must use LF line endings
+        run: |
+          if git ls-files -z '*.md' '*.csv' '*.yml' '*.py' | xargs -0 grep -l $'\r' ; then
+            echo "CRLF line endings found" && exit 1
+          fi
+      - name: No secrets-looking strings in sample data
+        run: |
+          ! git grep -n -E 'AKIA[0-9A-Z]{16}|BEGIN (RSA |EC )?PRIVATE KEY' -- . ':!.github/workflows/ci.yml'

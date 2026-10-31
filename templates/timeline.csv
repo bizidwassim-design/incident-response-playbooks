@@ -1,0 +1,8 @@
+incident_id,timestamp_utc,phase,event_type,description,actor,source_or_evidence,decision_ref,clock_ref
+INC-2026-042,2026-03-04T08:52Z,detection,signal,DLP alert: 1.2 GB download from HR share by svc-reporting,SOC analyst,SIEM alert #4821,,
+INC-2026-042,2026-03-04T09:15Z,detection,awareness,Incident manager confirms personal data in scope — awareness timestamp,Incident manager,SOC ticket #4821 + share inventory,D1,GDPR-72h;LOI25;PIPEDA
+INC-2026-042,2026-03-04T09:40Z,triage,severity,Severity set to S2 (High) — ~3 000 employees' identity data,Incident manager,Severity matrix,,
+INC-2026-042,2026-03-04T10:05Z,containment,action,Service account disabled; share permissions reset; sessions revoked,IT lead,Change CHG-1187,,
+INC-2026-042,2026-03-04T10:30Z,communication,internal,Internal holding note sent to need-to-know list,Comms,communication-log row 1,,
+INC-2026-042,2026-03-05T14:00Z,decision,decision,D2: risk to individuals assessed as 'risk' — regulator notification required,DPO + Legal,Decision log,D2,GDPR-72h
+INC-2026-042,2026-03-06T16:30Z,communication,regulator,Phased notification submitted to lead supervisory authority,DPO,Submission receipt ref SA-88213,D3,GDPR-72h
