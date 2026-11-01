@@ -1,0 +1,53 @@
+// Defender tampering: custom detection rule for Microsoft Defender XDR advanced hunting.
+// MITRE ATT&CK T1562.001 (Impair Defenses: Disable or Modify Tools).
+//
+// Deploy as TWO custom detection rules with the same body and a different last filter:
+//   1. Workstations (names matching your workstation convention, here "l-" and "d-"):
+//      response actions "Isolate device (Full)" + "Collect investigation package", severity High.
+//   2. Everything else (servers, devices outside the convention): ALERT ONLY, no automatic action.
+// Frequency every hour with a 4-hour look-back; keep `lookback` equal to the rule's look-back.
+// Required columns for a custom detection: Timestamp, DeviceId, DeviceName, ReportId.
+// Validate on 30 days of history and require zero results before enabling any action.
+//
+// Author: Wassim Bizid. MIT License. See docs/tips-and-tricks.md for the design notes.
+
+let lookback = 4h;
+// Accounts and devices used for IR exercises and penetration tests: they disable protections on purpose.
+let ExerciseActors = dynamic(["ir-exercise-user"]);
+// Script path of the RMM agent, usually the only legitimate caller of Add-MpPreference.
+let RmmScriptPath = @"\RmmAgent\scripting";
+let CmdTamper = DeviceProcessEvents
+| where Timestamp > ago(lookback)
+| where ProcessCommandLine has_any ("DisableRealtimeMonitoring", "DisableBehaviorMonitoring", "DisableIOAVProtection",
+    "DisableScriptScanning", "DisableAntiSpyware", "sc stop WinDefend", "sc stop Sense", "sc stop WdNisSvc",
+    "Stop-Service WinDefend", "Stop-Service Sense", "sc config WinDefend start= disabled", "MpCmdRun.exe -RemoveDefinitions -All")
+| project Timestamp, DeviceId, DeviceName, ReportId, Signal = "CmdLineTamper", Detail = ProcessCommandLine, Actor = InitiatingProcessAccountName;
+let RegTamper = DeviceRegistryEvents
+| where Timestamp > ago(lookback)
+| where RegistryKey has "Windows Defender"
+| where RegistryValueName in~ ("DisableAntiSpyware", "DisableRealtimeMonitoring", "DisableBehaviorMonitoring")
+| where RegistryValueData == "1"
+| project Timestamp, DeviceId, DeviceName, ReportId, Signal = "RegistryTamper", Detail = RegistryKey, Actor = InitiatingProcessAccountName;
+let EventTamper = DeviceEvents
+| where Timestamp > ago(lookback)
+| where ActionType in ("AntivirusDisabled", "AntivirusRealtimeProtectionDisabled", "SenseUnhealthy")
+| project Timestamp, DeviceId, DeviceName, ReportId, Signal = ActionType, Detail = AdditionalFields, Actor = InitiatingProcessAccountName;
+// Antivirus exclusions: detect the command, not the registry (registry changes are too noisy under GPO/Intune).
+let ExclusionCmd = DeviceProcessEvents
+| where Timestamp > ago(lookback)
+| where ProcessCommandLine has_any ("Add-MpPreference", "Set-MpPreference")
+| where ProcessCommandLine has_any ("ExclusionPath", "ExclusionProcess", "ExclusionExtension", "ExclusionIpAddress")
+| project Timestamp, DeviceId, DeviceName, ReportId, Signal = "AvExclusionCmdLine", Detail = ProcessCommandLine, Actor = InitiatingProcessAccountName;
+let ExclusionPs = DeviceEvents
+| where Timestamp > ago(lookback)
+| where ActionType == "PowerShellCommand"
+| where tostring(parse_json(AdditionalFields).Command) =~ "Add-MpPreference"
+| where InitiatingProcessCommandLine !has RmmScriptPath
+| project Timestamp, DeviceId, DeviceName, ReportId, Signal = "AvExclusionPowerShell", Detail = InitiatingProcessCommandLine, Actor = InitiatingProcessAccountName;
+CmdTamper
+| union RegTamper, EventTamper, ExclusionCmd, ExclusionPs
+| where Actor !in~ (ExerciseActors)
+// Rule 1 (auto-isolate): keep only workstations.
+| where DeviceName startswith "l-" or DeviceName startswith "d-"
+// Rule 2 (alert only): replace the line above with
+// | where DeviceName !startswith "l-" and DeviceName !startswith "d-"
