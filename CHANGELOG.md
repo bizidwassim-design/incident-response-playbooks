@@ -3,6 +3,12 @@
 All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Added
+- `docs/tips-and-tricks.md`: field notes on automated isolation, detection tuning, the isolation release procedure, post-pentest hunt/response pairs, priority-zero hardening, a lightweight SOAR and post-phishing hygiene.
+- `detections/defender-tamper-custom-detection.kql`: Defender XDR custom detection for T1562.001 in the two-rule pattern (auto-isolate workstations, alert-only elsewhere).
+
 ## [1.0.0] — 2026-10-31
 
 ### Added
