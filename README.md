@@ -19,6 +19,7 @@ templates/     incident-record.md · timeline.csv · communication-log.csv
 docs/          incident-management-process.md — how the two levels fit together (NIST SP 800-61 phases)
                tabletop-exercise-kit.md — 3 scripted scenarios with timed injects, plus an inject bank
                tips-and-tricks.md — field notes: automated isolation, tuning, release procedure, lightweight SOAR, phishing hygiene
+               ir-plan-use-cases.md — the ten use cases of the plan in short form, same spine as the playbooks
 detections/    defender-tamper-custom-detection.kql — Defender XDR custom detection for T1562.001 (two-rule pattern)
 scripts/       check_playbooks.py — structure validation, run by CI
 ```
