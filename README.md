@@ -18,6 +18,8 @@ templates/     incident-record.md · timeline.csv · communication-log.csv
                post-incident-review.md · severity-matrix.md · roles-raci.csv
 docs/          incident-management-process.md — how the two levels fit together (NIST SP 800-61 phases)
                tabletop-exercise-kit.md — 3 scripted scenarios with timed injects, plus an inject bank
+               tips-and-tricks.md — field notes: automated isolation, tuning, release procedure, lightweight SOAR, phishing hygiene
+detections/    defender-tamper-custom-detection.kql — Defender XDR custom detection for T1562.001 (two-rule pattern)
 scripts/       check_playbooks.py — structure validation, run by CI
 ```
 
@@ -31,6 +33,7 @@ scripts/       check_playbooks.py — structure validation, run by CI
 4. Run a tabletop from [docs/tabletop-exercise-kit.md](docs/tabletop-exercise-kit.md) with Legal, Comms, HR and an
    executive. Fix what the exercise breaks.
 5. Validate your edits: `python scripts/check_playbooks.py`.
+6. Read [docs/tips-and-tricks.md](docs/tips-and-tricks.md) before arming any automatic response.
 
 ## What's inside
 
